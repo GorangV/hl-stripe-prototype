@@ -1,9 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Stripe Subscription Import — HighLevel</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 .app { display: flex; height: 100vh; min-height: 700px; background: #f5f5f5; font-size: 13px; font-family: -apple-system, 'SF Pro Display', 'Segoe UI', sans-serif; }
@@ -52,15 +46,19 @@
 .step-footer { padding: 12px 20px; border-top: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
 .btn-p { background: #3b82f6; color: #fff; border: none; border-radius: 6px; padding: 8px 16px; font-size: 12px; font-weight: 500; cursor: pointer; }
 .btn-p:hover { background: #2563eb; }
-.btn-pp { background: #635bff; color: #fff; border: none; border-radius: 6px; padding: 8px 16px; font-size: 12px; font-weight: 500; cursor: pointer; }
+.btn-p.purple { background: #635bff; }
+.btn-p.purple:hover { background: #4f46e5; }
 .btn-s { background: #fff; color: #374151; border: 1px solid #d1d5db; border-radius: 6px; padding: 8px 16px; font-size: 12px; cursor: pointer; }
 .callout { border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 9px; font-size: 11px; }
 .callout.warn { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
-.callout.green { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+.callout.active-only { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+.callout-icon { font-size: 13px; flex-shrink: 0; margin-top: 1px; }
 .callout-title { font-weight: 600; margin-bottom: 2px; }
 .hero { background: #f0f4ff; border-radius: 8px; padding: 14px 16px; margin-bottom: 14px; text-align: center; }
 .hero-icons { display: flex; justify-content: center; gap: 10px; margin-bottom: 8px; }
 .hero-icon { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+.hero-title { font-size: 13px; font-weight: 600; color: #1e293b; margin-bottom: 3px; }
+.hero-sub { font-size: 11px; color: #64748b; }
 .toggle-row { border: 1px solid #bfdbfe; border-radius: 8px; padding: 11px 14px; margin-bottom: 9px; display: flex; align-items: center; justify-content: space-between; }
 .toggle-left { display: flex; align-items: center; gap: 10px; }
 .ticon { width: 28px; height: 28px; border-radius: 6px; background: #f0f4ff; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
@@ -86,7 +84,7 @@
 .tbl-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 11px; }
 th { text-align: left; padding: 7px 8px; color: #6b7280; font-weight: 500; border-bottom: 1px solid #f0f0f0; white-space: nowrap; }
-td { padding: 8px; color: #374151; border-bottom: 1px solid #f9fafb; vertical-align: middle; }
+td { padding: 8px 8px; color: #374151; border-bottom: 1px solid #f9fafb; vertical-align: middle; }
 tr:hover td { background: #fafafa; }
 .cb { width: 14px; height: 14px; border-radius: 3px; border: 1.5px solid #d1d5db; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
 .cb.checked { background: #3b82f6; border-color: #3b82f6; }
@@ -121,44 +119,47 @@ tr:hover td { background: #fafafa; }
 .log-table { width: 100%; max-width: 320px; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
 .log-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 12px; border-bottom: 1px solid #f0f0f0; font-size: 11px; }
 .log-row:last-child { border-bottom: none; }
-.autosync-bar { background: #eeebff; border: 1px solid #c4b5fd; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.res-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+.results-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 14px; }
 .res-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px 16px; background: #fff; }
-.res-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.res-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
 .res-icon { width: 28px; height: 28px; border-radius: 6px; background: #ede9fe; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+.res-title { font-size: 12px; font-weight: 600; color: #374151; }
+.res-ext { color: #9ca3af; font-size: 12px; cursor: pointer; }
 .res-row { display: flex; justify-content: space-between; padding: 5px 0; font-size: 11px; border-bottom: 1px solid #f9fafb; }
 .res-row:last-child { border-bottom: none; }
-.rv { font-weight: 600; color: #111; }
-.rv.ok { color: #059669; }
-.rv.warn { color: #d97706; }
-.rv.err { color: #ef4444; }
+.res-label { color: #6b7280; }
+.res-val { font-weight: 600; color: #111; }
+.res-val.ok { color: #059669; }
+.res-val.warn { color: #d97706; }
+.res-val.err { color: #ef4444; }
+.res-sync { font-size: 10px; color: #9ca3af; margin-top: 8px; }
 .err-badge { display: inline-flex; align-items: center; gap: 3px; background: #fff; border: 1px solid #fca5a5; color: #ef4444; border-radius: 4px; padding: 1px 6px; font-size: 10px; cursor: pointer; margin-left: 4px; }
 </style>
-</head>
-<body>
+
 <div class="app">
   <div class="sidebar">
     <div class="sidebar-logo"><div class="logo-arrows"><div class="arr-a"></div><div class="arr-b"></div><div class="arr-c"></div></div></div>
-    <div class="sidebar-account"><span>Headquarters 1800-PLUMB...</span><span style="font-size:9px;color:#6b7280">&#9654;</span></div>
-    <div class="sidebar-search"><span style="color:#6b7280;font-size:11px">&#9906;</span> Search</div>
+    <div class="sidebar-account"><span>Headquarters 1800-PLUMB...</span><span style="font-size:9px;color:#6b7280">▶</span></div>
+    <div class="sidebar-search"><span style="color:#6b7280;font-size:11px">⌕</span> Search</div>
     <div style="padding:6px 0;overflow-y:auto;flex:1;">
-      <div class="nav-item">&#11041; Launchpad</div>
-      <div class="nav-item">&#8861; Dashboard</div>
-      <div class="nav-item">&#128172; Conversations</div>
-      <div class="nav-item">&#128197; Calendars</div>
-      <div class="nav-item">&#128100; Contacts</div>
-      <div class="nav-item">&#10792; Opportunities</div>
-      <div class="nav-item active">&#128179; Payments</div>
+      <div class="nav-item">⬡ Launchpad</div>
+      <div class="nav-item">⊟ Dashboard</div>
+      <div class="nav-item">💬 Conversations</div>
+      <div class="nav-item">📅 Calendars</div>
+      <div class="nav-item">👤 Contacts</div>
+      <div class="nav-item">◈ Opportunities</div>
+      <div class="nav-item active">💳 Payments</div>
       <div class="nav-divider"></div>
-      <div class="nav-item">&#128226; Marketing</div>
-      <div class="nav-item">&#9889; Automation</div>
-      <div class="nav-item">&#127760; Sites</div>
-      <div class="nav-item">&#127891; Memberships</div>
-      <div class="nav-item">&#128202; Reporting</div>
-      <div class="nav-item">&#127987; App Marketplace</div>
+      <div class="nav-item">📢 Marketing</div>
+      <div class="nav-item">⚡ Automation</div>
+      <div class="nav-item">🌐 Sites</div>
+      <div class="nav-item">🎓 Memberships</div>
+      <div class="nav-item">📊 Reporting</div>
+      <div class="nav-item">🏪 App Marketplace</div>
     </div>
-    <div class="sidebar-bottom"><div class="nav-item">&#9881; Settings</div></div>
+    <div class="sidebar-bottom"><div class="nav-item">⚙ Settings</div></div>
   </div>
+
   <div class="main">
     <div class="topbar">
       <div class="topbar-left">
@@ -172,17 +173,21 @@ tr:hover td { background: #fafafa; }
         <span class="tb">Settings</span>
       </div>
       <div class="topbar-actions">
-        <span style="font-size:16px;color:#6b7280">&#128222;</span>
-        <span style="font-size:16px;color:#6b7280">&#128276;</span>
+        <span style="font-size:16px;color:#6b7280">📞</span>
+        <span style="font-size:16px;color:#6b7280">🔔</span>
         <div class="avatar">GK</div>
       </div>
     </div>
+
     <div class="page">
-      <div class="breadcrumb"><a>&#8592; Stripe</a><span style="color:#d1d5db">/</span><span>Import subscriptions</span></div>
+      <div class="breadcrumb"><a>← Stripe</a><span style="color:#d1d5db">/</span><span>Stripe Sync</span></div>
       <div class="card">
         <div class="card-header">
           <div class="stripe-icon">S</div>
-          <div><div class="card-title">Stripe subscription import</div><div class="card-sub">Import existing subscriptions and saved payment references from your connected Stripe account.</div></div>
+          <div>
+            <div class="card-title">Stripe Sync</div>
+            <div class="card-sub">Import existing subscriptions, contacts, and saved payment references from your connected Stripe account.</div>
+          </div>
         </div>
         <div class="step-layout">
           <div class="step-sidebar">
@@ -202,88 +207,241 @@ tr:hover td { background: #fafafa; }
     </div>
   </div>
 </div>
+
 <script>
-var step=1,dataTab='subscriptions',radioVal='none',progTimer=null;
+var step=1, dataTab='contacts', radioVal='none', progTimer=null;
 var subChecked=[true,true,true,true,true,true];
 var contactChecked=[true,true,true,true,true];
+
 var subs=[
   {name:'Tyler Brooks',email:'tyler@brooks.co',product:'Gym Membership Gold',amt:'$79.00',interval:'Monthly',next:'May 5, 2026',brand:'VISA',last4:'4242'},
   {name:'Sarah Kim',email:'sarah@kimspa.com',product:'Spa Monthly Basic',amt:'$49.00',interval:'Monthly',next:'May 8, 2026',brand:'MC',last4:'5555'},
   {name:'Lucas Martin',email:'lucas@m.io',product:'Online Course Annual',amt:'$299.00',interval:'Yearly',next:'Jan 14, 2027',brand:'VISA',last4:'1234'},
   {name:'Priya Nair',email:'priya@n.com',product:'Wellness Pro Plan',amt:'$129.00',interval:'Monthly',next:'May 12, 2026',brand:'AX',last4:'0005'},
   {name:'James Okonkwo',email:'james@o.biz',product:'Streaming Plus',amt:'$19.00',interval:'Monthly',next:'May 16, 2026',brand:'VISA',last4:'9876'},
-  {name:'Emily Tanaka',email:'emily@t.jp',product:'Studio Membership Basic',amt:'$35.00',interval:'Monthly',next:'May 20, 2026',brand:'MC',last4:'8888'}
+  {name:'Emily Tanaka',email:'emily@t.jp',product:'Studio Membership Basic',amt:'$35.00',interval:'Monthly',next:'May 20, 2026',brand:'MC',last4:'8888'},
 ];
 var contacts=[
   {name:'Tyler Brooks',email:'tyler@brooks.co',phone:'+1 415 000 0001',source:'Matched',brand:'VISA',last4:'4242',expiry:'04/28'},
   {name:'Sarah Kim',email:'sarah@kimspa.com',phone:'+1 415 000 0002',source:'Matched',brand:'MC',last4:'5555',expiry:'09/27'},
   {name:'Lucas Martin',email:'lucas@m.io',phone:'+1 415 000 0003',source:'New',brand:'VISA',last4:'1234',expiry:'11/26'},
   {name:'Priya Nair',email:'priya@n.com',phone:'+91 98000 00001',source:'Matched',brand:'AX',last4:'0005',expiry:'01/27'},
-  {name:'James Okonkwo',email:'james@o.biz',phone:'+1 312 000 0001',source:'New',brand:'VISA',last4:'9876',expiry:'06/28'}
+  {name:'James Okonkwo',email:'james@o.biz',phone:'+1 312 000 0001',source:'New',brand:'VISA',last4:'9876',expiry:'06/28'},
 ];
 var ineligible=[
   {name:'Ben Carter',email:'ben@c.dev',product:'API Usage Plan',amt:'Metered',reason:'Usage based billing'},
   {name:'Nora Patel',email:'nora@p.org',product:'Trial Starter',amt:'$0.00',reason:'Active trial period'},
-  {name:'Greg Weiss',email:'greg@w.co',product:'Enterprise Plan',amt:'$499.00',reason:'Bills within 72 hours'}
+  {name:'Greg Weiss',email:'greg@w.co',product:'Enterprise Plan',amt:'$499.00',reason:'Bills within 72 hours'},
 ];
+
 function bc(b){return b==='MC'?'#eb5757':b==='AX'?'#2563eb':'#1a56db';}
 function chk(checked,fn){return '<div class="cb '+(checked?'checked':'')+'" onclick="'+fn+'">'+(checked?'<svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>':'')+'</div>';}
+
 function renderStep1(){
   return '<div class="step-content">'
-    +'<div class="callout warn"><div style="font-size:13px;flex-shrink:0;margin-top:1px">&#9888;</div><div><div class="callout-title">Live data only</div>Import pulls from your Stripe Live account. Test mode subscriptions and contacts will not appear and will not be imported.</div></div>'
-    +'<div class="callout green"><div style="font-size:13px;flex-shrink:0;margin-top:1px">&#10003;</div><div><div class="callout-title">Active subscriptions only</div>Only subscriptions with an <strong>active</strong> status are imported. Expired, canceled, and past-due subscriptions are excluded automatically.</div></div>'
-    +'<div class="hero"><div class="hero-icons"><div class="hero-icon" style="background:#dbeafe">&#128203;</div><div class="hero-icon" style="background:#dcfce7">&#10003;</div><div class="hero-icon" style="background:#fef3c7">&#9201;</div></div><div style="font-size:13px;font-weight:600;color:#1e293b;margin-bottom:3px">Import your existing Stripe subscriptions</div><div style="font-size:11px;color:#64748b">HighLevel imports saved payment references already stored in Stripe. No card re-entry required for your customers.</div></div>'
-    +'<div class="toggle-row"><div class="toggle-left"><div class="ticon">&#128196;</div><div><div class="tlabel">Import subscriptions</div><div class="tdesc">Active subscriptions with status, billing date and product.</div></div></div><div class="tswitch"><div class="ttrack"></div><div class="tthumb"></div></div></div>'
-    +'<div class="toggle-row"><div class="toggle-left"><div class="ticon">&#128100;</div><div><div class="tlabel">Contact &amp; payment method sync</div><div class="tdesc">Match Stripe customers to HighLevel contacts and import saved card references.</div></div></div><div class="tswitch"><div class="ttrack"></div><div class="tthumb"></div></div></div>'
-    +'</div><div class="step-footer"><span style="font-size:11px;color:#9ca3af">Scanning your Stripe Live account...</span><button class="btn-p" onclick="goToStep(2)">Scan &amp; continue</button></div>';
+    +'<div class="callout warn"><div class="callout-icon">⚠</div><div><div class="callout-title">Live data only</div>Import pulls from your Stripe Live account. Test mode subscriptions and contacts will not appear and will not be imported.</div></div>'
+    +'<div class="callout active-only"><div class="callout-icon">✓</div><div><div class="callout-title">Active subscriptions only</div>Only subscriptions with an <strong>active</strong> status are imported. Expired, canceled, and past-due subscriptions are excluded automatically.</div></div>'
+    +'<div class="hero"><div class="hero-icons"><div class="hero-icon" style="background:#dbeafe">📋</div><div class="hero-icon" style="background:#dcfce7">✓</div><div class="hero-icon" style="background:#fef3c7">⏱</div></div><div class="hero-title">Sync your existing Stripe data into HighLevel</div><div class="hero-sub">HighLevel imports saved payment references already stored in Stripe. No card re-entry required for your customers.</div></div>'
+    +'<div class="toggle-row"><div class="toggle-left"><div class="ticon">📄</div><div><div class="tlabel">Import subscriptions</div><div class="tdesc">Active subscriptions with status, billing date and product.</div></div></div><div class="tswitch"><div class="ttrack"></div><div class="tthumb"></div></div></div>'
+    +'<div class="toggle-row"><div class="toggle-left"><div class="ticon">👤</div><div><div class="tlabel">Contact &amp; payment method sync</div><div class="tdesc">Match Stripe customers to HighLevel contacts and import saved card references.</div></div></div><div class="tswitch"><div class="ttrack"></div><div class="tthumb"></div></div></div>'
+    +'</div>'
+    +'<div class="step-footer"><span style="font-size:11px;color:#9ca3af">Scanning your Stripe Live account...</span><button class="btn-p" onclick="goToStep(2)">Scan &amp; continue</button></div>';
 }
+
 function renderStep2(){
-  var ss=subChecked.filter(Boolean).length,sc=contactChecked.filter(Boolean).length,content='';
-  if(dataTab==='subscriptions'){
-    var a=subChecked.every(Boolean);
-    var rows=subs.map(function(r,i){return '<tr><td style="width:32px">'+chk(subChecked[i],'toggleSub('+i+')')+'</td><td><div style="font-weight:500;color:#1e293b;font-size:11px">'+r.name+'</div><div style="color:#9ca3af;font-size:10px">'+r.email+'</div></td><td style="font-size:11px">'+r.product+'</td><td style="font-weight:500;font-size:11px">'+r.amt+'</td><td style="font-size:11px">'+r.interval+'</td><td style="font-size:11px">'+r.next+'</td><td><div class="pm-cell"><div class="chip" style="background:'+bc(r.brand)+'"><span>'+r.brand+'</span></div><span style="font-size:10px;color:#374151">..'+r.last4+'</span></div></td><td><span class="pill-a">Active</span></td></tr>';}).join('');
-    content='<div class="sel-row">'+chk(a,'toggleAllSubs()')+'<span style="font-size:11px;color:#374151;margin-left:2px">Select all</span><span class="sel-info">'+ss+' of '+subs.length+' selected</span></div><div class="tbl-wrap"><table style="table-layout:fixed;width:100%"><colgroup><col style="width:32px"><col style="width:15%"><col style="width:21%"><col style="width:8%"><col style="width:9%"><col style="width:13%"><col style="width:12%"><col style="width:10%"></colgroup><thead><tr><th></th><th>Customer</th><th>Product</th><th>Amount</th><th>Interval</th><th>Next billing</th><th>Payment method</th><th>Status</th></tr></thead><tbody>'+rows+'</tbody></table></div><div class="pagination"><span>1-'+subs.length+' of 42</span><div class="pbtn" style="opacity:.4">&lt;</div><div class="pbtn active">1</div><div class="pbtn">2</div><div class="pbtn">&gt;</div></div>';
-  } else if(dataTab==='contacts'){
+  var ss=subChecked.filter(Boolean).length, sc=contactChecked.filter(Boolean).length, content='';
+
+  if(dataTab==='contacts'){
     var a=contactChecked.every(Boolean);
-    var rows=contacts.map(function(r,i){return '<tr><td style="width:32px">'+chk(contactChecked[i],'toggleContact('+i+')')+'</td><td><div style="font-weight:500;font-size:11px;color:#1e293b">'+r.name+'</div><div style="font-size:10px;color:#9ca3af">'+r.email+'</div></td><td style="font-size:11px">'+r.phone+'</td><td><span style="font-size:10px;padding:2px 7px;border-radius:4px;background:'+(r.source==='Matched'?'#dcfce7':'#dbeafe')+';color:'+(r.source==='Matched'?'#166534':'#1e40af')+'">'+r.source+'</span></td><td><div class="pm-cell"><div class="chip" style="background:'+bc(r.brand)+'"><span>'+r.brand+'</span></div><span style="font-size:10px;color:#374151">..'+r.last4+'</span></div></td><td style="font-size:11px;color:#6b7280">'+r.expiry+'</td></tr>';}).join('');
-    content='<div style="font-size:11px;color:#64748b;background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:8px 12px;margin-bottom:10px;">Contacts associated with selected subscriptions. Matched contacts already exist in HighLevel. New contacts will be created. Saved card references shown alongside.</div><div class="sel-row">'+chk(a,'toggleAllContacts()')+'<span style="font-size:11px;color:#374151;margin-left:2px">Select all</span><span class="sel-info">'+sc+' of '+contacts.length+' selected</span></div><table style="width:100%"><thead><tr><th></th><th>Name</th><th>Phone</th><th>HL action</th><th>Saved card</th><th>Expiry</th></tr></thead><tbody>'+rows+'</tbody></table>';
+    var rows=contacts.map(function(r,i){
+      return '<tr>'
+        +'<td style="width:32px">'+chk(contactChecked[i],'toggleContact('+i+')')+'</td>'
+        +'<td><div style="font-weight:500;font-size:11px;color:#1e293b">'+r.name+'</div><div style="font-size:10px;color:#9ca3af">'+r.email+'</div></td>'
+        +'<td style="font-size:11px">'+r.phone+'</td>'
+        +'<td><span style="font-size:10px;padding:2px 7px;border-radius:4px;background:'+(r.source==='Matched'?'#dcfce7':'#dbeafe')+';color:'+(r.source==='Matched'?'#166534':'#1e40af')+'">'+r.source+'</span></td>'
+        +'<td><div class="pm-cell"><div class="chip" style="background:'+bc(r.brand)+'"><span>'+r.brand+'</span></div><span style="font-size:10px;color:#374151">••'+r.last4+'</span></div></td>'
+        +'<td style="font-size:11px;color:#6b7280">'+r.expiry+'</td>'
+        +'</tr>';
+    }).join('');
+    content='<div style="font-size:11px;color:#64748b;background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:8px 12px;margin-bottom:10px;">Contacts associated with selected subscriptions. Matched contacts already exist in HighLevel. New contacts will be created. Saved card references are shown alongside each contact.</div>'
+      +'<div class="sel-row">'+chk(a,'toggleAllContacts()')+'<span style="font-size:11px;color:#374151;margin-left:2px">Select all</span><span class="sel-info">'+sc+' of '+contacts.length+' selected</span></div>'
+      +'<table style="width:100%"><thead><tr><th></th><th>Name</th><th>Phone</th><th>HL action</th><th>Saved card</th><th>Expiry</th></tr></thead><tbody>'+rows+'</tbody></table>';
+
+  } else if(dataTab==='subscriptions'){
+    var a=subChecked.every(Boolean);
+    var rows=subs.map(function(r,i){
+      return '<tr>'
+        +'<td style="width:32px">'+chk(subChecked[i],'toggleSub('+i+')')+'</td>'
+        +'<td><div style="font-weight:500;color:#1e293b;font-size:11px">'+r.name+'</div><div style="color:#9ca3af;font-size:10px">'+r.email+'</div></td>'
+        +'<td style="font-size:11px">'+r.product+'</td>'
+        +'<td style="font-weight:500;font-size:11px">'+r.amt+'</td>'
+        +'<td style="font-size:11px">'+r.interval+'</td>'
+        +'<td style="font-size:11px">'+r.next+'</td>'
+        +'<td><div class="pm-cell"><div class="chip" style="background:'+bc(r.brand)+'"><span>'+r.brand+'</span></div><span style="font-size:10px;color:#374151">••'+r.last4+'</span></div></td>'
+        +'<td><span class="pill-a">● Active</span></td>'
+        +'</tr>';
+    }).join('');
+    content='<div class="sel-row">'+chk(a,'toggleAllSubs()')+'<span style="font-size:11px;color:#374151;margin-left:2px">Select all</span><span class="sel-info">'+ss+' of '+subs.length+' selected</span></div>'
+      +'<div class="tbl-wrap"><table style="table-layout:fixed;width:100%">'
+      +'<colgroup><col style="width:32px"><col style="width:15%"><col style="width:21%"><col style="width:8%"><col style="width:9%"><col style="width:13%"><col style="width:12%"><col style="width:10%"></colgroup>'
+      +'<thead><tr><th></th><th>Customer</th><th>Product</th><th>Amount</th><th>Interval</th><th>Next billing</th><th>Payment method</th><th>Status</th></tr></thead>'
+      +'<tbody>'+rows+'</tbody></table></div>'
+      +'<div class="pagination"><span>1–'+subs.length+' of 42</span><div class="pbtn" style="opacity:.4">‹</div><div class="pbtn active">1</div><div class="pbtn">2</div><div class="pbtn">›</div></div>';
+
   } else {
-    var rows=ineligible.map(function(r){return '<tr><td><div style="font-weight:500;font-size:11px;color:#1e293b">'+r.name+'</div><div style="font-size:10px;color:#9ca3af">'+r.email+'</div></td><td style="font-size:11px">'+r.product+'</td><td style="font-weight:500;font-size:11px">'+r.amt+'</td><td><span class="pill-w">'+r.reason+'</span></td></tr>';}).join('');
+    var rows=ineligible.map(function(r){
+      return '<tr>'
+        +'<td><div style="font-weight:500;font-size:11px;color:#1e293b">'+r.name+'</div><div style="font-size:10px;color:#9ca3af">'+r.email+'</div></td>'
+        +'<td style="font-size:11px">'+r.product+'</td>'
+        +'<td style="font-weight:500;font-size:11px">'+r.amt+'</td>'
+        +'<td><span class="pill-w">'+r.reason+'</span></td>'
+        +'</tr>';
+    }).join('');
     content='<table style="width:100%"><thead><tr><th>Customer</th><th>Product</th><th>Amount</th><th>Reason</th></tr></thead><tbody>'+rows+'</tbody></table>';
   }
-  return '<div class="step-content"><div class="scan-banner"><div class="scan-stats"><div style="text-align:center"><div class="ssval">50</div><div class="sslabel">Total found</div></div><div class="sdivider"></div><div style="text-align:center"><div class="ssval ok">42</div><div class="sslabel">Eligible</div></div><div class="sdivider"></div><div style="text-align:center"><div class="ssval warn">8</div><div class="sslabel">Not eligible</div></div></div><div style="display:flex;gap:6px"><button class="btn-s" style="font-size:11px;padding:5px 10px">Filter</button><div style="border:1px solid #d1d5db;border-radius:6px;padding:5px 10px;font-size:11px;color:#9ca3af;background:#fff;width:130px">Search</div></div></div><div class="dtabs"><div class="dtab '+(dataTab==='subscriptions'?'active':'')+'" onclick="switchTab('subscriptions')">Subscriptions <span class="cpill">'+ss+'</span></div><div class="dtab '+(dataTab==='contacts'?'active':'')+'" onclick="switchTab('contacts')">Contacts &amp; cards <span class="cpill">'+sc+'</span></div><div class="dtab '+(dataTab==='ineligible'?'active':'')+'" onclick="switchTab('ineligible')">Not eligible <span class="cpill warn">'+ineligible.length+'</span></div></div>'+content+'</div><div class="step-footer"><button class="btn-s" onclick="goToStep(1)">Previous</button><button class="btn-p" onclick="goToStep(3)">Continue</button></div>';
+
+  return '<div class="step-content">'
+    +'<div class="scan-banner"><div class="scan-stats">'
+    +'<div style="text-align:center"><div class="ssval">50</div><div class="sslabel">Total found</div></div>'
+    +'<div class="sdivider"></div>'
+    +'<div style="text-align:center"><div class="ssval ok">42</div><div class="sslabel">Eligible</div></div>'
+    +'<div class="sdivider"></div>'
+    +'<div style="text-align:center"><div class="ssval warn">8</div><div class="sslabel">Not eligible</div></div>'
+    +'</div><div style="display:flex;gap:6px"><button class="btn-s" style="font-size:11px;padding:5px 10px">Filter</button><div style="border:1px solid #d1d5db;border-radius:6px;padding:5px 10px;font-size:11px;color:#9ca3af;background:#fff;width:130px">⌕ Search</div></div></div>'
+    +'<div class="dtabs">'
+    +'<div class="dtab '+(dataTab==='contacts'?'active':'')+'" onclick="switchTab(\'contacts\')">Contacts &amp; cards <span class="cpill">'+sc+'</span></div>'
+    +'<div class="dtab '+(dataTab==='subscriptions'?'active':'')+'" onclick="switchTab(\'subscriptions\')">Subscriptions <span class="cpill">'+ss+'</span></div>'
+    +'<div class="dtab '+(dataTab==='ineligible'?'active':'')+'" onclick="switchTab(\'ineligible\')">Not eligible <span class="cpill warn">'+ineligible.length+'</span></div>'
+    +'</div>'
+    +content
+    +'</div>'
+    +'<div class="step-footer"><button class="btn-s" onclick="goToStep(1)">Previous</button><button class="btn-p" onclick="goToStep(3)">Continue</button></div>';
 }
+
 function renderStep3(){
-  var ss=subChecked.filter(Boolean).length,sc=contactChecked.filter(Boolean).length;
-  function rrow(val,label,desc){var s=radioVal===val;return '<div class="radio-row '+(s?'sel':'')+'" onclick="setRadio(''+val+'')"><div class="rcircle '+(s?'sel':'')+'">'+(s?'<div class="rdot"></div>':'')+'</div><div><div style="font-size:12px;font-weight:500;color:#1e293b">'+label+'</div><div style="font-size:11px;color:#64748b;margin-top:2px">'+desc+'</div></div></div>';}
-  return '<div class="step-content"><div style="font-size:12px;font-weight:500;color:#374151;margin-bottom:8px">Import summary</div><div class="sum-card"><div class="sum-row"><span style="color:#6b7280">Subscriptions</span><span style="font-weight:500;color:#1e293b">'+ss+' selected</span></div><div class="sum-row"><span style="color:#6b7280">Contacts</span><span style="font-weight:500;color:#1e293b">'+sc+' selected</span></div><div class="sum-row"><span style="color:#6b7280">Payment method references</span><span style="font-weight:500;color:#1e293b">'+sc+' selected</span></div></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><span style="font-size:12px;font-weight:500;color:#374151">Workflow automation behavior</span><span style="font-size:10px;color:#9ca3af">Optional</span></div>'+rrow('none','Do not trigger any workflows','Import silently. No automation fires.')+rrow('future','Trigger on future billing events only','Workflows fire on the first invoice event after import.')+rrow('import','Trigger on import','Fires subscription created immediately for each record.')+'<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:7px;padding:9px 12px;font-size:11px;color:#92400e;display:flex;gap:7px;margin-top:14px"><span>&#9888;</span><span>Re-running this import will not create duplicates. Stripe remains the source of truth for billing.</span></div></div><div class="step-footer"><button class="btn-s" onclick="goToStep(2)">Previous</button><button class="btn-p" onclick="goToStep(4)">Start import</button></div>';
-}
-function renderStep4(){
-  var ss=subChecked.filter(Boolean).length,sc=contactChecked.filter(Boolean).length;
-  return '<div style="flex:1;display:flex;flex-direction:column;"><div class="loading-wrap"><div class="loading-icon"><div class="spinner"></div>S</div><div style="font-size:14px;font-weight:600;color:#1e293b;margin-bottom:6px">Importing from Stripe...</div><div style="font-size:11px;color:#64748b;margin-bottom:24px">This may take a moment. You can leave this page and come back.</div><div class="progress-track"><div class="progress-fill"></div></div><div style="font-size:11px;color:#6b7280;margin-bottom:24px" id="prog-label">Importing subscriptions...</div><div class="log-table"><div class="log-row"><span style="color:#6b7280;font-size:11px">Subscriptions</span><span style="font-size:11px;font-weight:500;color:#1e293b;display:flex;align-items:center;gap:5px"><div class="dot-pulse"><span></span><span></span><span></span></div>'+ss+' queued</span></div><div class="log-row"><span style="color:#6b7280;font-size:11px">Contacts</span><span style="font-size:11px;font-weight:500;color:#1e293b;display:flex;align-items:center;gap:5px"><div class="dot-pulse"><span></span><span></span><span></span></div>'+sc+' queued</span></div><div class="log-row"><span style="color:#6b7280;font-size:11px">Payment methods</span><span style="font-size:11px;font-weight:500;color:#1e293b;display:flex;align-items:center;gap:5px"><div class="dot-pulse"><span></span><span></span><span></span></div>'+sc+' queued</span></div></div></div><div class="step-footer"><span style="font-size:11px;color:#9ca3af">Do not close this tab to see live progress.</span><button class="btn-pp" onclick="goToStep(5)">View results</button></div></div>';
-}
-function renderStep5(){
-  var ss=subChecked.filter(Boolean).length,sc=contactChecked.filter(Boolean).length;
-  var fs=Math.min(2,Math.floor(ss*0.05)),syncs=ss-fs,fp=Math.min(1,Math.floor(sc*0.1)),syncp=sc-fp;
-  function resCard(icon,title,synced,pending,pendingClass,err){
-    var errHtml=err>0?err+' <span class="err-badge">Error &#8599;</span>':''+err;
-    return '<div class="res-card"><div class="res-top"><div style="display:flex;align-items:center;gap:8px"><div class="res-icon">'+icon+'</div><div style="font-size:12px;font-weight:600;color:#374151">'+title+'</div></div><span style="color:#9ca3af;font-size:12px;cursor:pointer">&#8599;</span></div><div class="res-row"><span style="color:#6b7280">Synced</span><span class="rv ok">'+synced+'</span></div><div class="res-row"><span style="color:#6b7280">Pending</span><span class="rv '+(pendingClass||'')+'">'+pending+'</span></div><div class="res-row"><span style="color:#6b7280">Error</span><span class="rv '+(err>0?'err':'')+'">'+errHtml+'</span></div><div style="font-size:10px;color:#9ca3af;margin-top:8px">Last sync &nbsp; Apr 28, 2026 at 2:14 PM</div></div>';
+  var ss=subChecked.filter(Boolean).length, sc=contactChecked.filter(Boolean).length;
+  function rrow(val,label,desc){
+    var s=radioVal===val;
+    return '<div class="radio-row '+(s?'sel':'')+'" onclick="setRadio(\''+val+'\')"><div class="rcircle '+(s?'sel':'')+'">'+(s?'<div class="rdot"></div>':'')+'</div><div><div style="font-size:12px;font-weight:500;color:#1e293b">'+label+'</div><div style="font-size:11px;color:#64748b;margin-top:2px">'+desc+'</div></div></div>';
   }
-  return '<div class="step-content"><div class="autosync-bar"><div style="display:flex;align-items:center;gap:10px"><div style="width:28px;height:28px;border-radius:6px;background:#ede9fe;display:flex;align-items:center;justify-content:center;font-size:14px">&#8635;</div><div><div style="font-size:12px;font-weight:600;color:#4c1d95">Auto-sync enabled</div><div style="font-size:11px;color:#7c3aed;margin-top:1px">Stripe webhooks &#8594; HighLevel &nbsp;&#183;&nbsp; changes mirror within ~30 seconds</div></div></div><div style="display:flex;gap:8px;align-items:center"><button class="btn-pp">Force sync</button><span style="color:#9ca3af;cursor:pointer;font-size:16px">&#10005;</span></div></div><div class="res-grid">'+resCard('&#8635;','Subscriptions',syncs,'2','warn',fs)+resCard('&#128101;','Customers',sc,'0','',0)+resCard('&#128179;','Payment methods',syncp,'NIL','warn',fp)+'</div><div style="margin-top:14px;border:1px solid #e5e7eb;border-radius:8px;padding:14px 16px;background:#fff;"><div style="font-size:12px;font-weight:500;color:#374151;margin-bottom:10px">Post import checklist</div><div style="display:flex;flex-direction:column;gap:7px;font-size:11px;color:#64748b"><div style="display:flex;align-items:center;gap:8px"><span style="color:#22c55e">&#10003;</span> Verify subscription list in Payments &gt; Subscriptions tab</div><div style="display:flex;align-items:center;gap:8px"><span style="color:#22c55e">&#10003;</span> Confirm workflow triggers are active for invoice.paid and invoice.payment_failed</div>'+(fs>0?'<div style="display:flex;align-items:center;gap:8px"><span style="color:#f59e0b">&#9675;</span> Review '+fs+' failed subscription record(s) and re-attempt</div>':'')+(fp>0?'<div style="display:flex;align-items:center;gap:8px"><span style="color:#f59e0b">&#9675;</span> Review '+fp+' failed payment method reference(s)</div>':'')+'<div style="display:flex;align-items:center;gap:8px"><span style="color:#9ca3af">&#9675;</span> Enable subscription reporting dashboard in Reporting</div></div></div></div><div class="step-footer"><button class="btn-s" onclick="goToStep(2)">&#8635; Re-sync (back to review)</button><button class="btn-p">Go to Subscriptions &#8599;</button></div>';
+  return '<div class="step-content">'
+    +'<div style="font-size:12px;font-weight:500;color:#374151;margin-bottom:8px">Import summary</div>'
+    +'<div class="sum-card">'
+    +'<div class="sum-row"><span style="color:#6b7280">Subscriptions</span><span style="font-weight:500;color:#1e293b">'+ss+' selected</span></div>'
+    +'<div class="sum-row"><span style="color:#6b7280">Contacts</span><span style="font-weight:500;color:#1e293b">'+sc+' selected</span></div>'
+    +'<div class="sum-row"><span style="color:#6b7280">Payment method references</span><span style="font-weight:500;color:#1e293b">'+sc+' selected</span></div>'
+    +'</div>'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><span style="font-size:12px;font-weight:500;color:#374151">Workflow automation behavior</span><span style="font-size:10px;color:#9ca3af">Optional</span></div>'
+    +rrow('none','Do not trigger any workflows','Import silently. No automation fires.')
+    +rrow('future','Trigger on future billing events only','Workflows fire on the first invoice event after import.')
+    +rrow('import','Trigger on import','Fires subscription created immediately for each record.')
+    +'<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:7px;padding:9px 12px;font-size:11px;color:#92400e;display:flex;gap:7px;margin-top:14px"><span>⚠</span><span>Re-running this import will not create duplicates. Stripe remains the source of truth for billing.</span></div>'
+    +'</div>'
+    +'<div class="step-footer"><button class="btn-s" onclick="goToStep(2)">Previous</button><button class="btn-p" onclick="goToStep(4)">Start import</button></div>';
 }
+
+function renderStep4(){
+  var ss=subChecked.filter(Boolean).length, sc=contactChecked.filter(Boolean).length;
+  return '<div style="flex:1;display:flex;flex-direction:column;">'
+    +'<div class="loading-wrap">'
+    +'<div class="loading-icon"><div class="spinner"></div>S</div>'
+    +'<div style="font-size:14px;font-weight:600;color:#1e293b;margin-bottom:6px">Syncing from Stripe...</div>'
+    +'<div style="font-size:11px;color:#64748b;margin-bottom:24px">This may take a moment. You can leave this page and come back.</div>'
+    +'<div class="progress-track"><div class="progress-fill"></div></div>'
+    +'<div style="font-size:11px;color:#6b7280;margin-bottom:24px" id="prog-label">Importing subscriptions...</div>'
+    +'<div class="log-table">'
+    +'<div class="log-row"><span style="color:#6b7280;font-size:11px">Subscriptions</span><span style="font-size:11px;font-weight:500;color:#1e293b;display:flex;align-items:center;gap:5px"><div class="dot-pulse"><span></span><span></span><span></span></div>'+ss+' queued</span></div>'
+    +'<div class="log-row"><span style="color:#6b7280;font-size:11px">Contacts</span><span style="font-size:11px;font-weight:500;color:#1e293b;display:flex;align-items:center;gap:5px"><div class="dot-pulse"><span></span><span></span><span></span></div>'+sc+' queued</span></div>'
+    +'<div class="log-row"><span style="color:#6b7280;font-size:11px">Payment methods</span><span style="font-size:11px;font-weight:500;color:#1e293b;display:flex;align-items:center;gap:5px"><div class="dot-pulse"><span></span><span></span><span></span></div>'+sc+' queued</span></div>'
+    +'</div></div>'
+    +'<div class="step-footer"><span style="font-size:11px;color:#9ca3af">Do not close this tab to see live progress.</span><button class="btn-p purple" onclick="goToStep(5)">View results</button></div>'
+    +'</div>';
+}
+
+function renderStep5(){
+  var ss=subChecked.filter(Boolean).length, sc=contactChecked.filter(Boolean).length;
+  var fs=Math.min(2,Math.floor(ss*0.05)), syncs=ss-fs;
+  var fp=Math.min(1,Math.floor(sc*0.1)), syncp=sc-fp;
+
+  return '<div class="step-content">'
+    +'<div class="results-grid">'
+
+    +'<div class="res-card"><div class="res-card-top"><div style="display:flex;align-items:center;gap:8px"><div class="res-icon">↻</div><div class="res-title">Subscriptions</div></div><span class="res-ext">↗</span></div>'
+    +'<div class="res-row"><span class="res-label">Synced</span><span class="res-val ok">'+syncs+'</span></div>'
+    +'<div class="res-row"><span class="res-label">Pending</span><span class="res-val warn">2</span></div>'
+    +'<div class="res-row"><span class="res-label">Error</span><span class="res-val '+(fs>0?'err':'')+'">'+fs+(fs>0?' <span class="err-badge">Error ↗</span>':'')+'</span></div>'
+    +'<div class="res-sync">Last sync &nbsp; Apr 28, 2026 at 2:14 PM</div></div>'
+
+    +'<div class="res-card"><div class="res-card-top"><div style="display:flex;align-items:center;gap:8px"><div class="res-icon">👥</div><div class="res-title">Customers</div></div><span class="res-ext">↗</span></div>'
+    +'<div class="res-row"><span class="res-label">Synced</span><span class="res-val ok">'+sc+'</span></div>'
+    +'<div class="res-row"><span class="res-label">Pending</span><span class="res-val">0</span></div>'
+    +'<div class="res-row"><span class="res-label">Error</span><span class="res-val">0</span></div>'
+    +'<div class="res-sync">Last sync &nbsp; Apr 28, 2026 at 2:14 PM</div></div>'
+
+    +'<div class="res-card"><div class="res-card-top"><div style="display:flex;align-items:center;gap:8px"><div class="res-icon">💳</div><div class="res-title">Payment methods</div></div><span class="res-ext">↗</span></div>'
+    +'<div class="res-row"><span class="res-label">Synced</span><span class="res-val ok">'+syncp+'</span></div>'
+    +'<div class="res-row"><span class="res-label">Pending</span><span class="res-val warn">NIL</span></div>'
+    +'<div class="res-row"><span class="res-label">Error</span><span class="res-val '+(fp>0?'err':'')+'">'+fp+(fp>0?' <span class="err-badge">Error ↗</span>':'')+'</span></div>'
+    +'<div class="res-sync">Last sync &nbsp; Apr 28, 2026 at 2:14 PM</div></div>'
+
+    +'</div>'
+
+    +'<div style="border:1px solid #e5e7eb;border-radius:8px;padding:14px 16px;background:#fff;">'
+    +'<div style="font-size:12px;font-weight:500;color:#374151;margin-bottom:10px">Post import checklist</div>'
+    +'<div style="display:flex;flex-direction:column;gap:7px;font-size:11px;color:#64748b">'
+    +'<div style="display:flex;align-items:center;gap:8px"><span style="color:#22c55e">✓</span> Verify subscription list in Payments &gt; Subscriptions tab</div>'
+    +'<div style="display:flex;align-items:center;gap:8px"><span style="color:#22c55e">✓</span> Confirm workflow triggers are active for invoice.paid and invoice.payment_failed</div>'
+    +(fs>0?'<div style="display:flex;align-items:center;gap:8px"><span style="color:#f59e0b">○</span> Review '+fs+' failed subscription record(s) and re-attempt</div>':'')
+    +(fp>0?'<div style="display:flex;align-items:center;gap:8px"><span style="color:#f59e0b">○</span> Review '+fp+' failed payment method reference(s)</div>':'')
+    +'<div style="display:flex;align-items:center;gap:8px"><span style="color:#9ca3af">○</span> Verify contacts from the Contacts page on the left nav bar and check if saved payment methods are showing up</div>'
+    +'</div></div>'
+    +'</div>'
+
+    +'<div class="step-footer">'
+    +'<button class="btn-p" onclick="goToStep(2)">↺ Re-sync</button>'
+    +'<button class="btn-p">Go to Subscriptions ↗</button>'
+    +'</div>';
+}
+
 var progLabels=['Importing subscriptions...','Syncing contacts...','Importing payment references...','Finalizing records...'];
 var progIdx=0;
-function startProg(){clearInterval(progTimer);progIdx=0;progTimer=setInterval(function(){progIdx=(progIdx+1)%progLabels.length;var el=document.getElementById('prog-label');if(el)el.textContent=progLabels[progIdx];},2200);}
-function render(){var area=document.getElementById('content-area');clearInterval(progTimer);if(step===1)area.innerHTML=renderStep1();else if(step===2)area.innerHTML=renderStep2();else if(step===3)area.innerHTML=renderStep3();else if(step===4){area.innerHTML=renderStep4();startProg();}else area.innerHTML=renderStep5();updateNums();}
-function updateNums(){for(var i=1;i<=5;i++){var n=document.getElementById('snum'+i),l=document.getElementById('slabel'+i);if(!n)continue;if(i<step){n.className='snum done';n.innerHTML='&#10003;';l.className='slabel';}else if(i===step){n.className='snum active';n.innerHTML=i;l.className='slabel active';}else{n.className='snum pending';n.innerHTML=i;l.className='slabel pending';}}}
-function goToStep(n){step=n;render();}
-function switchTab(t){dataTab=t;if(step===2)render();}
-function setRadio(v){radioVal=v;if(step===3)render();}
-function toggleSub(i){subChecked[i]=!subChecked[i];if(step===2)render();}
-function toggleAllSubs(){var a=subChecked.every(Boolean);subChecked=subChecked.map(function(){return !a;});if(step===2)render();}
-function toggleContact(i){contactChecked[i]=!contactChecked[i];if(step===2)render();}
-function toggleAllContacts(){var a=contactChecked.every(Boolean);contactChecked=contactChecked.map(function(){return !a;});if(step===2)render();}
+function startProg(){
+  clearInterval(progTimer); progIdx=0;
+  progTimer=setInterval(function(){
+    progIdx=(progIdx+1)%progLabels.length;
+    var el=document.getElementById('prog-label');
+    if(el) el.textContent=progLabels[progIdx];
+  },2200);
+}
+
+function render(){
+  var area=document.getElementById('content-area');
+  clearInterval(progTimer);
+  if(step===1) area.innerHTML=renderStep1();
+  else if(step===2) area.innerHTML=renderStep2();
+  else if(step===3) area.innerHTML=renderStep3();
+  else if(step===4){ area.innerHTML=renderStep4(); startProg(); }
+  else area.innerHTML=renderStep5();
+  updateNums();
+}
+
+function updateNums(){
+  for(var i=1;i<=5;i++){
+    var n=document.getElementById('snum'+i), l=document.getElementById('slabel'+i);
+    if(!n) continue;
+    if(i<step){ n.className='snum done'; n.innerHTML='✓'; l.className='slabel'; }
+    else if(i===step){ n.className='snum active'; n.innerHTML=i; l.className='slabel active'; }
+    else{ n.className='snum pending'; n.innerHTML=i; l.className='slabel pending'; }
+  }
+}
+
+function goToStep(n){ step=n; render(); }
+function switchTab(t){ dataTab=t; if(step===2) render(); }
+function setRadio(v){ radioVal=v; if(step===3) render(); }
+function toggleSub(i){ subChecked[i]=!subChecked[i]; if(step===2) render(); }
+function toggleAllSubs(){ var a=subChecked.every(Boolean); subChecked=subChecked.map(function(){return !a;}); if(step===2) render(); }
+function toggleContact(i){ contactChecked[i]=!contactChecked[i]; if(step===2) render(); }
+function toggleAllContacts(){ var a=contactChecked.every(Boolean); contactChecked=contactChecked.map(function(){return !a;}); if(step===2) render(); }
+
 render();
 </script>
-</body>
-</html>
